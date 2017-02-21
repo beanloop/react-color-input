@@ -1,4 +1,4 @@
-import {StatelessComponent} from 'react'
+import {StatelessComponent, ReactChild, ReactType} from 'react'
 import {SketchPicker} from 'react-color'
 import compose from 'recompose/compose'
 import pure from 'recompose/pure'
@@ -67,13 +67,65 @@ const Popover = styled.div`
   }
 `
 
+export type Props = {
+  /**
+   * Label to display for the input.
+   */
+  label: string
+  /**
+   * Callback when the color is modified.
+   */
+  onChange?: (updatedColor: string) => void
+  /**
+   * Button component to render the saveButton.
+   */
+  saveButton?: ReactType
+  /**
+   * A string or a rendered React component for the label to the save button.
+   */
+  saveLabel?: ReactChild
+  /**
+   * Callback when the save button is clicked.
+   */
+  onSave?: (event: Event) => void
+}
+
+export type PrivateProps = {
+  open: boolean
+  setOpen: (open: boolean) => void
+  color: any
+  setColor: (color: any) => void
+}
+
 const enhance = compose(
   withState('open', 'setOpen', false),
   withState('color', 'setColor', ({value}) => value),
   pure,
 )
 
-export const ColorPicker = enhance(({open, setOpen, label, onChange, color, setColor, ...props}) =>
+const Actions = styled.div`
+  width: 200px;
+  padding: 10px;
+  box-sizing: initial;
+  background: rgb(255, 255, 255);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  box-shadow: rgba(0, 0, 0, 0.14902) 0px 0px 0px 1px, rgba(0, 0, 0, 0.14902) 0px 8px 16px;
+  margin-top: -2px;
+  display: flex;
+  justify-content: flex-end;
+`
+
+export const ColorPicker = enhance(({
+  open, setOpen,
+  label, onChange,
+  color, setColor,
+  saveButton: SaveButton,
+  saveLabel, onSave,
+  ...props,
+}: Props & PrivateProps) =>
   <Row vertical='center' style={{paddingBottom: 8}}>
     <label style={{paddingRight: 16}}>{label}</label>
     <Swatch onClick={() => setOpen(true)}>
@@ -92,6 +144,21 @@ export const ColorPicker = enhance(({open, setOpen, label, onChange, color, setC
           disableAlpha
           color={color}
           onChangeComplete={color => setColor(color)} />
+        {SaveButton &&
+          <Actions>
+            {SaveButton &&
+              <SaveButton onClick={event => {
+                setOpen(false)
+
+                if (onSave) {
+                  onSave(event)
+                }
+              }}>
+                {saveLabel}
+              </SaveButton>
+            }
+          </Actions>
+        }
       </Popover>
     </Positioner>
     }
