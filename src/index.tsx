@@ -73,12 +73,12 @@ const enhance = compose(
   pure,
 )
 
-export const ColorPicker = enhance(({open, setOpen, label, onChange, color, setColor}) => {
-  return <Row vertical='center' style={{paddingBottom: 8}}>
+export const ColorPicker = enhance(({open, setOpen, label, onChange, color, setColor, ...props}) =>
+  <Row vertical='center' style={{paddingBottom: 8}}>
     <label style={{paddingRight: 16}}>{label}</label>
     <Swatch onClick={() => setOpen(true)}>
       <Color color={color.rgb
-        ? `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.rgb.a})`
+        ? `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, 1)`
         : color
       } />
     </Swatch>
@@ -88,9 +88,12 @@ export const ColorPicker = enhance(({open, setOpen, label, onChange, color, setC
         onChange(color.hex || color)
       }} />
       <Popover>
-        <SketchPicker color={color} onChangeComplete={color => setColor(color)} />
+        <SketchPicker {...props}
+          disableAlpha
+          color={color}
+          onChangeComplete={color => setColor(color)} />
       </Popover>
     </Positioner>
     }
   </Row>
-})
+)
