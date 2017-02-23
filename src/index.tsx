@@ -1,4 +1,4 @@
-import {StatelessComponent, ReactChild, ReactType} from 'react'
+import {ReactChild, ReactType, StatelessComponent} from 'react'
 import {SketchPicker} from 'react-color'
 import compose from 'recompose/compose'
 import pure from 'recompose/pure'
@@ -149,6 +149,7 @@ export const ColorPicker = enhance(({
             {SaveButton &&
               <SaveButton onClick={event => {
                 setOpen(false)
+                onChange(color.hex || color)
 
                 if (onSave) {
                   onSave(event)
